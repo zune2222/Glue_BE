@@ -6,9 +6,11 @@ import java.util.UUID;
 
 import lombok.*;
 import org.glue.glue_be.common.BaseEntity;
+import org.glue.glue_be.config.LocalDateStringConverter;
 
 @Entity
 @Table(name = "user")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 
@@ -33,6 +35,7 @@ public class User extends BaseEntity {
     private Integer gender;
 
     @Column(name = "birth_date", nullable = false)
+    @Convert(converter = LocalDateStringConverter.class)
     private LocalDate birthDate;
 
     // TODO: 언어로 할 거면 변경 필요 (+ 함수도)
