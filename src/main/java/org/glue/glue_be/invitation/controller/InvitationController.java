@@ -9,6 +9,8 @@ import org.glue.glue_be.meeting.dto.MeetingDto;
 import org.glue.glue_be.meeting.service.MeetingService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -51,10 +53,12 @@ public class InvitationController {
     
     /**
      * 현재 로그인한 사용자 ID 가져오기
-     * 실제 구현에서는 Spring Security에서 인증 정보를 가져와야 합니다
      */
     private Long getCurrentUserId() {
-        // TODO: Spring Security를 통해 현재 인증된 사용자 ID 가져오기
-        return 2L; // 임시 값
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getPrincipal() == null) {
+            throw new IllegalStateException("인증 정보를 찾을 수 없습니다.");
+        }
+        return Long.parseLong(authentication.getPrincipal().toString());
     }
 } 

@@ -61,6 +61,7 @@ public class MeetingDto {
         private Integer maxParticipants;
         private Integer status;
         private List<Long> participantIds;
+        private Long hostId;
 
         public static Response from(Meeting meeting) {
             return Response.builder()
@@ -74,6 +75,7 @@ public class MeetingDto {
                     .minParticipants(meeting.getMinParticipants())
                     .maxParticipants(meeting.getMaxParticipants())
                     .status(meeting.getStatus())
+                    .hostId(meeting.getHost().getUserId())
                     .participantIds(meeting.getParticipants().stream()
                             .map(participant -> participant.getUser().getUserId())
                             .collect(Collectors.toList()))

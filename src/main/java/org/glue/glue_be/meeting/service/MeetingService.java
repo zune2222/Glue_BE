@@ -58,6 +58,7 @@ public class MeetingService {
                 .maxParticipants(request.getMaxPpl())
                 .currentParticipants(1) // 생성자가 첫 번째 참가자
                 .status(1) // 1: 활성화 상태
+                .host(creator) // 호스트 설정
                 .build();
 
         Meeting savedMeeting = meetingRepository.save(meeting);
@@ -89,12 +90,9 @@ public class MeetingService {
         User invitee = userRepository.findById(inviteeId)
                 .orElseThrow(() -> new BaseException(UserResponseStatus.USER_NOT_FOUND));
 
-        // 초대 생성자가 모임 참가자인지 확인
-        boolean isCreatorParticipant = meeting.getParticipants().stream()
-                .anyMatch(p -> p.getUser().getUserId().equals(creatorId));
-
-        if (!isCreatorParticipant) {
-            throw new BaseException(MeetingResponseStatus.NON_PARTICIPANT_INVITATION);
+        // 초대 생성자가 모임의 호스트인지 확인
+        if (!meeting.isHost(creatorId)) {
+            throw new BaseException(MeetingResponseStatus.NOT_HOST_PERMISSION);
         }
 
         // 이미 참가자인지 확인
@@ -108,6 +106,7 @@ public class MeetingService {
         invitationRequest.setMaxUses(1); // 1회용 초대장
         invitationRequest.setExpirationDays(0); // 6시간 후 만료 (0.25일)
         invitationRequest.setExpirationHours(6); // 6시간
+        invitationRequest.setInviteeId(inviteeId); // 초대된 사용자 ID 설정
 
         return invitationService.createInvitation(invitationRequest, creatorId);
     }

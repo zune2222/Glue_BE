@@ -17,6 +17,7 @@ public class InvitationDto {
         private Integer expirationDays;
         private Integer expirationHours;
         private Long meetingId;
+        private Long inviteeId;
         
         public void setMeetingId(Long meetingId) {
             this.meetingId = meetingId;
@@ -33,6 +34,7 @@ public class InvitationDto {
         private Integer usedCount;
         private Integer status;
         private Long meetingId;
+        private Long inviteeId;
         
         public static Response from(Invitation invitation) {
             Response response = new Response();
@@ -43,6 +45,7 @@ public class InvitationDto {
             response.usedCount = invitation.getUsedCount();
             response.status = invitation.getStatus();
             response.meetingId = invitation.getMeetingId();
+            response.inviteeId = invitation.getInviteeId();
             return response;
         }
     }

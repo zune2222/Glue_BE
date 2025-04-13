@@ -40,8 +40,11 @@ public class Invitation extends BaseEntity {
     @Column(name = "meeting_id", nullable = false)
     private Long meetingId;
     
+    @Column(name = "invitee_id", nullable = true)
+    private Long inviteeId; // 초대장을 수락할 수 있는 사용자 ID
+    
     @Builder
-    private Invitation(String code, LocalDateTime expiresAt, Integer maxUses, User creator, Long meetingId) {
+    private Invitation(String code, LocalDateTime expiresAt, Integer maxUses, User creator, Long meetingId, Long inviteeId) {
         this.code = code;
         this.expiresAt = expiresAt;
         this.maxUses = maxUses;
@@ -49,10 +52,21 @@ public class Invitation extends BaseEntity {
         this.usedCount = 0;
         this.status = 1;
         this.meetingId = meetingId;
+        this.inviteeId = inviteeId;
     }
     
     public boolean isValid() {
         return status == 1 && LocalDateTime.now().isBefore(expiresAt) && usedCount < maxUses;
+    }
+    
+    // 특정 사용자만 사용할 수 있는 초대장인지 확인
+    public boolean isForSpecificUser() {
+        return inviteeId != null;
+    }
+    
+    // 특정 사용자가 초대장을 사용할 수 있는지 확인
+    public boolean canBeUsedBy(Long userId) {
+        return !isForSpecificUser() || inviteeId.equals(userId);
     }
     
     public void incrementUsedCount() {

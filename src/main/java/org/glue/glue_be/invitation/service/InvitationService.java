@@ -78,6 +78,12 @@ public class InvitationService {
         Meeting meeting = meetingRepository.findById(request.getMeetingId())
                 .orElseThrow(() -> new BaseException(MeetingResponseStatus.MEETING_NOT_FOUND));
         
+        // inviteeId가 있는 경우 해당 사용자가 유효한지 확인
+        if (request.getInviteeId() != null) {
+            userRepository.findById(request.getInviteeId())
+                    .orElseThrow(() -> new BaseException(UserResponseStatus.USER_NOT_FOUND, "초대할 사용자를 찾을 수 없습니다"));
+        }
+        
         String code = generateUniqueCode();
         
         // expiresAt 계산
@@ -102,6 +108,7 @@ public class InvitationService {
                 .maxUses(request.getMaxUses())
                 .creator(creator)
                 .meetingId(request.getMeetingId())
+                .inviteeId(request.getInviteeId())
                 .build();
         
         return InvitationDto.Response.from(invitationRepository.save(invitation));
@@ -155,6 +162,11 @@ public class InvitationService {
             } else {
                 throw new BaseException(InvitationResponseStatus.INVITATION_INVALID);
             }
+        }
+        
+        // 특정 사용자를 위한 초대장인 경우, 해당 사용자만 사용 가능하도록 체크
+        if (!invitation.canBeUsedBy(userId)) {
+            throw new BaseException(InvitationResponseStatus.INVITATION_NOT_FOR_USER);
         }
         
         // 초대장 사용 횟수 증가
