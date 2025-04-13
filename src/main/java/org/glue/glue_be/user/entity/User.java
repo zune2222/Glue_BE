@@ -6,8 +6,9 @@ import java.util.UUID;
 
 import lombok.*;
 import org.glue.glue_be.common.BaseEntity;
-import org.glue.glue_be.config.LocalDateStringConverter;
+import org.glue.glue_be.common.config.LocalDateStringConverter;
 
+@Getter
 @Entity
 @Table(name = "user")
 @Getter
