@@ -11,7 +11,6 @@ import org.glue.glue_be.common.config.LocalDateStringConverter;
 @Getter
 @Entity
 @Table(name = "user")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
 
